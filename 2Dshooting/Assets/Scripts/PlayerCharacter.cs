@@ -9,8 +9,7 @@ public class PlayerCharacter : MasterCharacter
     // Update is called once per frame
     void Update()
     {
-        InputMove();
-        InputShoot();
+        InputMove();        
     }
 
     private void FixedUpdate()
@@ -35,13 +34,7 @@ public class PlayerCharacter : MasterCharacter
         
         else if (Input.GetButtonUp("Crouch"))        
             crouch = false;        
-    }
-
-    private void InputShoot()
-    {
-        if (Input.GetButtonDown("Fire1"))
-            Attack();
-    }
+    }    
 
     public void OnLanding()
     {
@@ -51,11 +44,5 @@ public class PlayerCharacter : MasterCharacter
     public void OnCrouching()
     {
         character_animator.SetBool("IsCrouching", crouch);
-    }
-    protected override void Attack()
-    {
-        if (!bulletPrefab) return;
-        Instantiate(bulletPrefab, firePos.position, firePos.rotation);
-    }
-
+    }   
 }
