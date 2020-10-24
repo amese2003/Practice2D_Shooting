@@ -7,7 +7,10 @@ public class EnemyCharacter : MasterCharacter
 {
     protected override void Die()
     {
-        Instantiate(deathEffect, transform.position, Quaternion.identity);
-        Destroy(gameObject);
+        if (deathEffect)
+        {
+            Instantiate(deathEffect, transform.position, Quaternion.identity);
+            Destroy(gameObject);
+        }
     }
 }

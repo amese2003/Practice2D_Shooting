@@ -15,15 +15,17 @@ public class MasterCharacter : MonoBehaviour
     protected int health = 10;
     public GameObject deathEffect;
 
+    public Transform firePos;
+    public GameObject bulletPrefab;
 
-    protected virtual void TakeDamage(int amount)
+
+    public void TakeDamage(int amount)
     {
         health -= amount;
         if (health <= 0)
             Die();
     }
 
-    protected virtual void Die()
-    {       
-    }
+    protected virtual void Attack() {}
+    protected virtual void Die() {}
 }

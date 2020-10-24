@@ -6,16 +6,11 @@ public class PlayerCharacter : MasterCharacter
 {
     [SerializeField] private PlayerController2D controller;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     // Update is called once per frame
     void Update()
     {
         InputMove();
+        InputShoot();
     }
 
     private void FixedUpdate()
@@ -35,16 +30,18 @@ public class PlayerCharacter : MasterCharacter
             character_animator.SetBool("IsJumping", true);
         }
 
-        if (Input.GetButtonDown("Crouch"))
-        {
+        if (Input.GetButtonDown("Crouch"))        
             crouch = true;
-        }
-        else if (Input.GetButtonUp("Crouch"))
-        {
-            crouch = false;
-        }
+        
+        else if (Input.GetButtonUp("Crouch"))        
+            crouch = false;        
     }
 
+    private void InputShoot()
+    {
+        if (Input.GetButtonDown("Fire1"))
+            Attack();
+    }
 
     public void OnLanding()
     {
@@ -55,6 +52,10 @@ public class PlayerCharacter : MasterCharacter
     {
         character_animator.SetBool("IsCrouching", crouch);
     }
-
+    protected override void Attack()
+    {
+        if (!bulletPrefab) return;
+        Instantiate(bulletPrefab, firePos.position, firePos.rotation);
+    }
 
 }
