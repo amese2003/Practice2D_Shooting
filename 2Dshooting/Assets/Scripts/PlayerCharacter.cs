@@ -18,6 +18,12 @@ public class PlayerCharacter : MasterCharacter
         InputMove();
     }
 
+    private void FixedUpdate()
+    {
+        controller.Move(horizontalMove * Time.fixedDeltaTime, crouch, jump);
+        jump = false;
+    }
+
     private void InputMove()
     {
         horizontalMove = Input.GetAxisRaw("Horizontal") * moveSpeed;
