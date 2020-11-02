@@ -13,18 +13,4 @@ public class EnemyPathFind : MonoBehaviour
         if (!searchCollider)
             searchCollider = transform.Find("FindEnemy").gameObject.GetComponent<CircleCollider2D>();
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
-    void Test()
-    {
-    }
-
-    
-
-
-
 }

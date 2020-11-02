@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     public GridManager gridManager;
+    public PathFindRequest pathReq;
 
     public MasterCharacter player;
     public MasterCharacter enemy;
@@ -17,10 +18,10 @@ public class GameManager : MonoBehaviour
 
     public Vector3 enemyPos
     {
-        get { return enemy.gameObject.transform.position; }
+        get { return enemy.gameObject.transform.Find("GroundCheck").position; }
     }
 
-    private void Start()
+    private void Awake()
     {
         Instance = this;
         

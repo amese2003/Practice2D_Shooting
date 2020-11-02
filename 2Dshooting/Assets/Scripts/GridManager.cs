@@ -40,7 +40,6 @@ public class GridManager : MonoBehaviour
 
     private void Update()
     {
-        Trace();
     }
 
 
@@ -58,27 +57,29 @@ public class GridManager : MonoBehaviour
 
                 bool walkable = true;                
                 Collider2D temp = Physics2D.OverlapCircle(worldPoint, nodeRadius, unwalkable);
+
+                
                 if (temp != null)
+                {
+                    Vector3 terrainPos = temp.gameObject.transform.position;
+
+                    float xDir = worldPoint.x - terrainPos.x;
+                    float yDir = worldPoint.y - terrainPos.y;
+
                     walkable = false;
+                }
 
                 grid_map[col, row] = new Node(tile_grid.WorldToCell(worldPoint), worldPoint, walkable, col, row);
             }
         }
     }
 
-    async void Trace()
+    public List<Node> Trace(Vector3 startPos, Vector3 targetPos ,float unit_height)
     {
-        FindPath(GameManager.Instance.enemyPos, GameManager.Instance.playerPos);
+        return FindPath(startPos, targetPos, unit_height);
     }
 
-    //async void temp()
-    //{
-    //    List<Node> te;
-    //    await Task.Run(() => te = FindPath(Vector3.zero, Vector3.one));
-    //    await Task.Delay(1000);
-    //}
-
-    private List<Node> FindPath(Vector3 startPos, Vector3 endPos)
+    private List<Node> FindPath(Vector3 startPos, Vector3 endPos, float body_size)
     {
         Vector3 cellPos = tile_grid.WorldToCell(startPos);
 
@@ -95,8 +96,47 @@ public class GridManager : MonoBehaviour
 
             for (int i = 1; i < openSet.Count; i++)
             {
+                Node nextNode = openSet[i];
+
                 if (openSet[i].fCost < currentNode.fCost || openSet[i].fCost == currentNode.fCost && openSet[i].hCost < currentNode.hCost)
-                    currentNode = openSet[i];
+                {
+                    Stack<Node> check = new Stack<Node>();
+                    HashSet<Node> col_check = new HashSet<Node>();
+
+                    int pass_size = 0;
+
+                    check.Push(nextNode);
+                    col_check.Add(nextNode);
+
+                    while (check.Count > 0 && pass_size < body_size)
+                    {
+                        int col = check.Peek().col;
+                        int row = check.Pop().row;
+                        pass_size++;
+
+
+                        if (nextNode.col >= body_size && nextNode.col < col_Grid - body_size)
+                        {
+                            if (grid_map[col - 1, row].walkable && !col_check.Contains(grid_map[col - 1, row]))
+                            {
+                                check.Push(grid_map[col - 1, row]);
+                                col_check.Add(grid_map[col - 1, row]);
+                            }
+
+                            if (grid_map[col + 1, row].walkable && !col_check.Contains(grid_map[col + 1, row]))
+                            {
+                                check.Push(grid_map[col + 1, row]);
+                                col_check.Add(grid_map[col + 1, row]);
+                            }
+                        }
+                    }
+
+                    if (pass_size < body_size)
+                        continue;
+
+
+                    currentNode = nextNode;
+                }
             }
 
             openSet.Remove(currentNode);
@@ -190,8 +230,6 @@ public class GridManager : MonoBehaviour
 
         int row = Mathf.RoundToInt((gridTotalSizeX - 1) * percentX);
         int col = Mathf.RoundToInt((gridTotalSizeY - 1) * percentY);
-
-        Debug.Log(grid_map[col, row].worldPos);
         return grid_map[col, row];        
     }
 

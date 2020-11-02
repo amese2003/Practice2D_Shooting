@@ -6,13 +6,14 @@ public class MasterCharacter : MonoBehaviour
 {
     public Animator character_animator;
 
-    [SerializeField] protected float moveSpeed = 40f;
+    [SerializeField] public float moveSpeed;
 
     protected float horizontalMove = 0f;
     protected bool jump = false;
     protected bool crouch = false;
 
     protected int health = 10;
+    public int unitHeight { get; protected set; }
     public GameObject deathEffect;
 
     public Transform firePos;
