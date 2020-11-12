@@ -6,7 +6,7 @@ public class MasterCharacter : MonoBehaviour
 {
     public Animator character_animator;
 
-    [SerializeField] public float moveSpeed;
+    [SerializeField] public float moveSpeed = 0.1f;
 
     protected float horizontalMove = 0f;
     protected bool jump = false;

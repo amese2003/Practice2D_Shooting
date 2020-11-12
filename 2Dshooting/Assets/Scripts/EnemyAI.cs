@@ -28,8 +28,8 @@ public class EnemyAI : MonoBehaviour
         if (target == null)
             return;
 
-        Finish_CallBack callBack = TraceEnemy_CallBack;
-        GameManager.Instance.pathReq.RequestPath(character.unitHeight, gameObject.transform.position, target.transform.position,  callBack);
+        //Finish_CallBack callBack = TraceEnemy_CallBack;
+        //GameManager.Instance.pathReq.RequestPath(character.unitHeight, gameObject.transform.position, target.transform.position,  callBack);
         Debug.Log("xhd");
     }
 
@@ -46,23 +46,40 @@ public class EnemyAI : MonoBehaviour
     {
         int nodeNum = 0;
         Vector2 wayPoint = path[0].worldPos;
-        float timer = 0;
+        float percent = 0f;
+        float max = max = Mathf.Abs(path[path.Count - 1].worldPos.x - gameObject.transform.position.x) / character.moveSpeed; ;
+        float time = 0f;
         
         while(true)
         {
-            if(Vector2.Distance(wayPoint, gameObject.transform.position)  == 0)
+            if(wayPoint.x == gameObject.transform.position.x || percent > .8f)
             {
                 nodeNum++;
+                percent = 0;
                 if (nodeNum >= path.Count)
                     yield break;
-                wayPoint = path[nodeNum].worldPos;
+
+                
+                wayPoint = path[nodeNum].worldPos;                            
             }
 
-            transform.position = wayPoint;
+            float x = easeInQuad(gameObject.transform.position.x, wayPoint.x, percent);
+            gameObject.transform.position = new Vector2(x, gameObject.transform.position.y);
+            time += Time.deltaTime;
+            percent = time / max;
+            //transform.position = wayPoint;
 
-            //Vector2.MoveTowards(transform.position, wayPoint, character.moveSpeed * Time.deltaTime);
-            yield return new WaitForSeconds(0.01f);
+            //float newPos = gameObject.transform.position.x + (wayPoint.x - gameObject.transform.position.x * character.moveSpeed * Time.deltaTime);
+            //Vector2.MoveTowards(transform.position, wayPoint, character.moveSpeed);
+
+            // percent += Time.deltaTime;
+            //transform.position = new Vector2(newPos, transform.position.y);
+            yield return null;
         }
     }
 
+    private float easeInQuad(float start, float end, float value)
+    {
+        return Mathf.Lerp(start, end, value);
+    }
 }
