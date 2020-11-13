@@ -41,6 +41,8 @@ public class GridManager : MonoBehaviour
     {
         if (!tile_grid) tile_grid = back_tile.GetComponent<Grid>();
 
+        nodeRadius = tile_grid.cellSize.x / 2;
+
         nodeDiameter = nodeRadius * 2; // grid간의 간격 (중앙에서 중앙으로)
         gridTotalSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridTotalSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
@@ -66,7 +68,7 @@ public class GridManager : MonoBehaviour
                 //bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));    
                 Collider2D temp = Physics2D.OverlapCircle(worldPoint, nodeRadius, unwalkableMask);
                 int movementPanelty = 0;
-                bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
+                bool walkable = temp == null;
 
                 if (walkable)
                 {
@@ -84,6 +86,8 @@ public class GridManager : MonoBehaviour
                 grid[row, col] = new Node(tile_grid.WorldToCell(worldPoint), worldPoint, walkable, row, col, movementPanelty);
             }
         }
+
+        BlurPenaltyMap(2);
     }
 
     private void BlurPenaltyMap(int blurSize)
@@ -142,9 +146,9 @@ public class GridManager : MonoBehaviour
     {
         List<Node> neighbours = new List<Node>();
 
-        for (int col = -1; col <= 1; col++)
+        for (int row = -1; row <= 1; row++)
         {
-            for (int row = -1; row <= 1; row++)
+            for (int col = -1; col <= 1; col++)
             {
                 if (col == 0 && row == 0)
                     continue;
@@ -154,7 +158,7 @@ public class GridManager : MonoBehaviour
 
                 if (checkRow >= 0 && checkRow < gridTotalSizeX && checkCol >= 0 && checkCol < gridTotalSizeY)
                 {
-                    neighbours.Add(grid[checkCol, checkRow]);
+                    neighbours.Add(grid[checkRow, checkCol]);
                 }
             }
         }        
@@ -174,12 +178,12 @@ public class GridManager : MonoBehaviour
 
         int row = Mathf.RoundToInt((gridTotalSizeX - 1) * percentX);
         int col = Mathf.RoundToInt((gridTotalSizeY - 1) * percentY);
-        return grid[col, row];        
+        return grid[row, col];        
     }
 
     void OnDrawGizmos()
     {
-        Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
+        Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, gridWorldSize.y, 1));
         if (grid != null && onlyDisplayPathGizmos)
         {
             foreach (Node n in grid)

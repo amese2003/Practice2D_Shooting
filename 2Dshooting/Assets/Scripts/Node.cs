@@ -8,8 +8,9 @@ public class Node : IHeapItem<Node>
     public Vector3 cellPos;
     public Vector3 worldPos;
 
-    public int col;
+    
     public int row;
+    public int col;
     public int movePenalty;    
 
     public int gCost;

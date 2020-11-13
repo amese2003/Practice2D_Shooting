@@ -19,13 +19,28 @@ public class PathFindRequest : MonoBehaviour
         instance = this;
         if (gridManager == null) 
             gridManager = gameObject.GetComponent<GridManager>();
+
+        pathFinding = GetComponent<PathFinding>();
     }
 
     private void Update()
     {
+        if(results.Count > 0)
+        {
+            int itemInQueue = results.Count;
+            lock (results)
+            {
+                for(int i = 0; i <itemInQueue; i++)
+                {
+                    PathResult result = results.Dequeue();
+                    result.callback(result.path, result.success);
+                }
+            }
+        }
+
     }
 
-    public void RequestPath(PathRequest _request)
+    public static void RequestPath(PathRequest _request)
     {
         ThreadStart threadStart = delegate ()
         {
@@ -50,9 +65,9 @@ public struct PathResult
 {
     public Vector3[] path;
     public bool success;
-    public Finish_CallBack callback;
+    public Action<Vector3[], bool> callback;
 
-    public PathResult(Vector3[] _path, bool _success, Finish_CallBack _callback)
+    public PathResult(Vector3[] _path, bool _success, Action<Vector3[], bool> _callback)
     {
         path = _path;
         success = _success;
@@ -66,14 +81,12 @@ public struct PathRequest
 {
     public Vector3 pathStart;
     public Vector3 pathEnd;
-    public Finish_CallBack callback;
-    public int unitSize;
+    public Action<Vector3[], bool> callback;
 
-    public PathRequest(int _size, Vector3 _start, Vector3 _end, Finish_CallBack _callback)
+    public PathRequest(Vector3 _start, Vector3 _end, Action<Vector3[], bool> _callback)
     {
         pathStart = _start;
         pathEnd = _end;
         callback = _callback;
-        unitSize = _size;
     }
 }

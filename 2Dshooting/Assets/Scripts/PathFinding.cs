@@ -62,7 +62,7 @@ public class PathFinding : MonoBehaviour
         }
 
         if (pathSuccess)
-        {
+        { 
             wayPoints = RetracePath(startNode, targetNode);
             pathSuccess = wayPoints.Length > 0;
         }
@@ -105,8 +105,8 @@ public class PathFinding : MonoBehaviour
 
     int GetDistance(Node seeker, Node target)
     {
-        int distanceX = Mathf.Abs((int)seeker.cellPos.x - (int)target.cellPos.x);
-        int distanceY = Mathf.Abs((int)seeker.cellPos.y - (int)target.cellPos.y);
+        int distanceX = Mathf.Abs(seeker.row - target.row);
+        int distanceY = Mathf.Abs(seeker.col - target.col);
 
         if (distanceX > distanceY)
             return 14 * distanceY + 10 * (distanceX - distanceY);
